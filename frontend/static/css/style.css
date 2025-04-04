@@ -1,0 +1,194 @@
+/* Root Variables for Easy Theming (optional, for fallback use in custom areas) */
+:root {
+  --primary: #1e3a8a;
+  --secondary: #172554;
+  --background: #0f172a;
+  --text: #e2e8f0;
+}
+
+/* Universal Dark Mode Styling */
+body {
+  background-color: var(--background);
+  color: var(--text);
+  font-family: 'Arial', sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+/* Container for consistent spacing */
+.container {
+  max-width: 800px;
+  margin: auto;
+  padding: 20px;
+}
+
+/* Grid Layout for Displaying Images (used in history/results) */
+.image-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 20px;
+  padding: 20px;
+}
+
+/* Image card styling */
+.image-box {
+  border: 1px solid var(--primary);
+  padding: 10px;
+  background-color: var(--secondary);
+  border-radius: 0.5rem;
+  color: var(--text);
+}
+
+/* Ensure images fill box nicely */
+img {
+  width: 100%;
+  height: auto;
+  border-radius: 5px;
+}
+
+.button {
+  background-color: var(--primary);
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 0.4rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.button:hover {
+  background-color: #3b82f6; /* Lighter blue */
+}
+
+.input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  background-color: var(--secondary);
+  color: var(--text);
+  border: 1px solid var(--primary);
+  border-radius: 0.5rem;
+}
+
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.form label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.result-body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+.result-container {
+  background-color: white;
+  color: black;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  max-width: 600px;
+  width: 90%;
+}
+
+.result-title {
+  text-align: center;
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  font-weight: bold;
+}
+
+.result-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9rem;
+  color: #555;
+  margin-bottom: 1rem;
+}
+
+.patient-info, .scan-date {
+  font-weight: 500;
+}
+
+.patient-id-section {
+  margin-bottom: 1rem;
+}
+
+.label {
+  font-size: 0.85rem;
+  color: #777;
+}
+
+.patient-id {
+  font-weight: bold;
+  color: var(--primary);
+}
+
+.segmented-image-wrapper {
+  margin-top: 20px;
+}
+
+.segmented-image {
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.action-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 1.5rem;
+}
+
+.download-btn,
+.sms-btn,
+.email-btn {
+  background-color: var(--primary);
+  color: white;
+  padding: 10px;
+  border: none;
+  border-radius: 6px;
+  text-align: center;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.download-btn:hover {
+  background-color: #2563eb;
+}
+.sms-btn:hover {
+  background-color: #16a34a;
+}
+.email-btn:hover {
+  background-color: #d97706;
+}
+
+.status-message {
+  margin-top: 1rem;
+  text-align: center;
+  font-size: 0.85rem;
+}
+
+.hidden {
+  display: none;
+}
+
+.status-message {
+  margin-top: 1rem;
+  text-align: center;
+  font-size: 0.9rem;
+}
+
+.status-green {
+  color: #22c55e; /* green-500 */
+}
+
+.status-red {
+  color: #ef4444; /* red-500 */
+}

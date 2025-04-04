@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Scan History</title>
+  <link rel="stylesheet" href="C:\Users\Priyanshu\ML projects\hackachino\frontend\static\css\style.css" />
+</head>
+<body class="bg-background text-textPrimary min-h-screen p-6">
+
+  <div class="container max-w-5xl mx-auto">
+    <h2 class="text-3xl font-bold mb-4">🗂️ Scan History for {{ patient_name }}</h2>
+    <p class="mb-6 text-sm text-gray-400">Patient UID: {{ patient_uid }}</p>
+
+    {% for record in records %}
+      <div class="scan-info mb-10">
+        <h3 class="text-xl font-semibold mb-3 text-primary">{{ record.scan_date }}</h3>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+          {% for image in record.segmented_images %}
+            <div class="bg-secondary p-4 rounded-xl shadow-md text-center">
+              <img src="{{ url_for('static', filename=image) }}" alt="Segmented Scan" class="rounded-md mb-3" />
+              <p class="text-sm text-gray-300 mb-2">
+                {{ record.name }}, {{ record.age }}, {{ record.gender }}<br>
+                <span class="text-xs text-gray-400">{{ record.scan_date }}</span>
+              </p>
+              <a href="{{ url_for('static', filename=image) }}" download class="inline-block mt-1 px-4 py-2 bg-primary hover:bg-secondary text-white rounded-md text-sm transition">
+                ⬇ Download
+              </a>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+
+</body>
+</html>

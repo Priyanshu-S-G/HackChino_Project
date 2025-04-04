@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Brain Tumor Segmentation Portal</title>
+  <link rel="stylesheet" href="C:\Users\Priyanshu\ML projects\hackachino\frontend\static\css\style.css">
+  <style>
+    /* Minimal layout styling for index page */
+    .center-screen {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .card {
+      background-color: var(--secondary);
+      padding: 40px;
+      border-radius: 1rem;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+      max-width: 400px;
+      width: 100%;
+      text-align: center;
+    }
+
+    .title {
+      font-size: 1.875rem;
+      font-weight: bold;
+      color: var(--text);
+      margin-bottom: 1rem;
+    }
+
+    .subtitle {
+      color: var(--text);
+      margin-bottom: 2rem;
+    }
+
+    .button-group {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .button.alt {
+      background-color: var(--secondary);
+      border: 1px solid var(--primary);
+    }
+
+    .button.alt:hover {
+      background-color: var(--primary);
+    }
+  </style>
+</head>
+<body class="center-screen">
+  <div class="card">
+    <h1 class="title">🧠 Brain Tumor Segmentation</h1>
+    <p class="subtitle">Please select an option:</p>
+
+    <div class="button-group">
+      
+      <a href = "upload.html"><button id="new-patient-btn" class="button">Start New Scan</button></a>
+      <a href = "history.html"><button id="existing-patient-btn" class="button">View Scan History</button></a>
+    </div>
+  </div>
+  <script src="C:\Users\Priyanshu\ML projects\hackachino\frontend\static\js\script.js"></script>
+</body>
+</html>

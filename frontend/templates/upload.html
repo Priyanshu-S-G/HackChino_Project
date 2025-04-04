@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Upload MRI Scan</title>
+  <link rel="stylesheet" href="C:\Users\Priyanshu\ML projects\hackachino\frontend\static\css\style.css" />
+</head>
+<body>
+  <div class="container">
+    <div class="image-box">
+      <h2 style="text-align: center;">📤 Upload MRI Scan</h2>
+
+      <!-- Patient Type Switch -->
+      <div class="form-group">
+        <label>Patient Type</label>
+        <select id="patient_type" class="input">
+          <option value="new">🧍 New Patient</option>
+          <option value="existing">♻️ Returning Patient</option>
+        </select>
+      </div>
+
+      <form id="upload-form" enctype="multipart/form-data" class="form">
+        <!-- For Existing Patient -->
+        <div id="existing-fields" style="display: none;">
+          <label>Patient UID</label>
+          <input type="text" id="patient_uid" class="input" />
+        </div>
+
+        <!-- For New Patient -->
+        <div id="new-fields">
+          <label>Patient Name</label>
+          <input type="text" id="patient_name" class="input" required />
+
+          <label>Patient Age</label>
+          <input type="number" id="patient_age" min="0" max="120" class="input" required />
+
+          <label>Patient Gender</label>
+          <select id="patient_gender" class="input">
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+            <option value="Other">Other</option>
+          </select>
+
+          <label>Mobile Number (Optional)</label>
+          <input type="text" id="mobile_number" class="input" />
+
+          <label>Email ID (Optional)</label>
+          <input type="email" id="email_id" class="input" />
+
+          <label>Doctor's Name (Optional)</label>
+          <input type="text" id="doctor_name" class="input" />
+        </div>
+
+        <!-- MRI Upload -->
+        <label>Upload MRI Images</label>
+        <input type="file" id="mri_images" multiple accept=".jpg,.jpeg,.png" class="input" required />
+
+        <button type="submit" class="button" style="width: 100%;">Upload</button>
+      </form>
+
+      <p id="status-message" class="status-message status-red hidden"></p>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const patientType = document.getElementById("patient_type");
+      const existingFields = document.getElementById("existing-fields");
+      const newFields = document.getElementById("new-fields");
+
+      function toggleFields() {
+        const mode = patientType.value;
+        if (mode === "existing") {
+          existingFields.style.display = "block";
+          newFields.style.display = "none";
+        } else {
+          existingFields.style.display = "none";
+          newFields.style.display = "block";
+        }
+      }
+
+      patientType.addEventListener("change", toggleFields);
+      toggleFields(); // on page load
+    });
+  </script>
+  <script src="/static/js/upload.js"></script>
+</body>
+</html>

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Scan Results</title>
+  <link rel="stylesheet" href="C:\Users\Priyanshu\ML projects\hackachino\frontend\static\css\style.css">
+</head>
+<body class="result-body">
+  <div class="result-container">
+    <h2 class="result-title">Scan Results</h2>
+
+    <!-- Patient Info + Scan Date -->
+    <div class="result-meta">
+      <p class="patient-info">{{ patient_name }}, {{ patient_age }}, {{ patient_gender }}</p>
+      <p class="scan-date">{{ scan_date }}</p>
+    </div>
+
+    <!-- Patient ID (optional) -->
+    <div class="patient-id-section">
+      <p class="label">Patient ID:</p>
+      <p class="patient-id">{{ patient_id }}</p>
+    </div>
+
+    <!-- Segmented Image -->
+    <div class="segmented-image-wrapper">
+      <img src="{{ url_for('static', filename=segmented_image) }}" alt="Brain MRI Segmentation Output" class="segmented-image">
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="action-buttons">
+      <a href="{{ url_for('static', filename=segmented_image) }}" download class="download-btn">Download Image</a>
+      <button id="send-sms" class="sms-btn">Send via SMS</button>
+      <button id="send-email" class="email-btn">Send via Email</button>
+    </div>
+
+    <!-- Status Message -->
+    <p id="status-message" class="status-message hidden"></p>
+  </div>
+
+  <script src="{{ url_for('static', filename='js/result.js') }}"></script>
+</body>
+</html>

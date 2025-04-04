@@ -1,0 +1,31 @@
+version: "3.9"
+
+services:
+  backend:
+    build:
+      context: .                      # Root context so we can copy frontend from here
+      dockerfile: backend/Dockerfile # Explicit Dockerfile path
+    container_name: segmentation-backend
+    ports:
+      - "5000:5000"
+    depends_on:
+      - mongodb
+    environment:
+      MONGO_URI: "mongodb://mongodb:27017/brain_tumor_db"
+      DEBUG: "true"
+    volumes:
+      - ./models:/app/models          # Make models available in /app/models
+      - ./frontend:/frontend          # Optional: Mount frontend for static serving
+    restart: unless-stopped
+
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    restart: unless-stopped
+
+volumes:
+  mongo-data:
