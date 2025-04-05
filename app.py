@@ -7,8 +7,7 @@ from werkzeug.utils import secure_filename
 from database_handler import save_scan_record
 from PIL import Image
 
-frontend_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../frontend'))
-app = Flask(__name__, template_folder=os.path.join(frontend_path))
+app = Flask(__name__, template_folder='templates', static_folder='static')
 
 # Ensure necessary folders exist
 UPLOAD_FOLDER = "uploads"
