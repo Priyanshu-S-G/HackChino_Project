@@ -48,6 +48,14 @@ models = {
 def home():
     return render_template('index.html')
 
+@app.route('/upload.html')
+def upload_page():
+    return render_template('upload.html')
+
+@app.route('/history.html')
+def history_page():
+    return render_template('history.html')
+
 @app.route('/api/upload', methods=['POST'])
 def upload_mri():
     files = request.files.getlist("mri_images")
