@@ -20,14 +20,14 @@ def generate_patient_id(name, phone):
 def generate_scan_id():
     return str(uuid.uuid4())
 
-def save_scan_record(
+def save_new_patient_scan(
     patient_name,
     patient_age,
     patient_gender,
     phone,
     email,
     doctor_name,
-    original_file_path,  # list of image paths
+    original_file_path,
     segmented_image_path
 ):
     patient_id = generate_patient_id(patient_name, phone)
@@ -44,7 +44,31 @@ def save_scan_record(
         "email": email,
         "doctor_name": doctor_name,
         "scan_date": scan_date,
-        "original_image_paths": original_file_path,  # <- renamed to plural
+        "original_image_paths": original_file_path,
+        "segmented_image_path": segmented_image_path
+    }
+
+    result = collection.insert_one(record)
+    return {
+        "inserted_id": str(result.inserted_id),
+        "patient_id": patient_id,
+        "scan_id": scan_id,
+        "scan_date": scan_date
+    }
+
+def save_existing_patient_scan(
+    patient_id,
+    original_file_path,
+    segmented_image_path
+):
+    scan_id = generate_scan_id()
+    scan_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+    record = {
+        "patient_id": patient_id,
+        "scan_id": scan_id,
+        "scan_date": scan_date,
+        "original_image_paths": original_file_path,
         "segmented_image_path": segmented_image_path
     }
 

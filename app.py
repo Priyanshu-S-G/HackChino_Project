@@ -11,9 +11,9 @@ app = Flask(__name__, template_folder='templates', static_folder='static')
 
 # Ensure necessary folders exist
 UPLOAD_FOLDER = "uploads"
-STATIC_FOLDER = "static"
+MASK_FOLDER = "masks"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-os.makedirs(STATIC_FOLDER, exist_ok=True)
+os.makedirs(MASK_FOLDER, exist_ok=True)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 @tf.keras.utils.register_keras_serializable()
@@ -52,9 +52,17 @@ def home():
 def upload_page():
     return render_template('upload.html')
 
+@app.route('/result.html')
+def result_page():
+    return render_template('result.html')
+
 @app.route('/history.html')
 def history_page():
     return render_template('history.html')
+
+@app.route('/history_results.html')
+def history_results_page():
+    return render_template('history_results.html')
 
 @app.route('/api/upload', methods=['POST'])
 def upload_mri():
@@ -88,38 +96,57 @@ def upload_mri():
     avg_prediction = np.mean(list(predictions.values()), axis=0)
     mask = postprocess_prediction(avg_prediction)
 
-    segmented_image_path = os.path.join(STATIC_FOLDER, f"segmented_{os.path.basename(first_image_path)}")
+    segmented_image_path = os.path.join(MASK_FOLDER, f"segmented_{os.path.basename(first_image_path)}")
     Image.fromarray(mask[0, :, :, 0] * 255).convert("L").save(segmented_image_path)
 
-    scan_info = {
-        "patient_name": request.form.get("patient_name", "Unknown"),
-        "patient_age": request.form.get("patient_age", ""),
-        "patient_gender": request.form.get("patient_gender", ""),
-        "doctor_name": request.form.get("doctor_name", ""),
-        "phone": request.form.get("phone", ""),
-        "email": request.form.get("email", ""),
-        "file_path": saved_filepaths,
-        "segmented_image_path": segmented_image_path
-    }
+    # Determine patient type
+    patient_type = request.form.get("patient_type", "new")
+    patient_info = None
 
-    patient_info = save_scan_record(
-        scan_info["patient_name"],
-        scan_info["patient_age"],
-        scan_info["patient_gender"],
-        scan_info["phone"],
-        scan_info["email"],
-        scan_info["doctor_name"],
-        scan_info["file_path"],
-        scan_info["segmented_image_path"]
-    )
+    if patient_type == "new":
+        # Handle new patient
+        patient_name = request.form.get("patient_name", "Unknown")
+        patient_age = request.form.get("patient_age", "")
+        patient_gender = request.form.get("patient_gender", "")
+        doctor_name = request.form.get("doctor_name", "")
+        phone = request.form.get("phone", "")
+        email = request.form.get("email", "")
+
+        patient_info = save_new_patient_scan(
+            patient_name=patient_name,
+            patient_age=patient_age,
+            patient_gender=patient_gender,
+            phone=phone,
+            email=email,
+            doctor_name=doctor_name,
+            original_file_path=saved_filepaths,
+            segmented_image_path=segmented_image_path
+        )
+
+    else:
+        # Handle returning patient
+        patient_id = request.form.get("patient_id", "").strip()
+        if not patient_id:
+            return jsonify({"error": "Patient ID required for returning patients"}), 400
+
+        # You can add an optional check here:
+        # if not check_patient_exists(patient_id):
+        #     return jsonify({"error": "Patient ID not found"}), 404
+
+        patient_info = save_existing_patient_scan(
+            patient_id=patient_id,
+            original_file_path=saved_filepaths,
+            segmented_image_path=segmented_image_path
+        )
 
     return render_template("result.html",
                            patient_id=patient_info["patient_id"],
-                           patient_name=scan_info["patient_name"],
-                           patient_age=scan_info["patient_age"],
-                           patient_gender=scan_info["patient_gender"],
+                           patient_name=request.form.get("patient_name", ""),
+                           patient_age=request.form.get("patient_age", ""),
+                           patient_gender=request.form.get("patient_gender", ""),
                            scan_date=patient_info["scan_date"].split(" ")[0],
                            segmented_image=segmented_image_path.replace("static/", ""))
+
 
 def preprocess_image(image_path):
     if not os.path.exists(image_path):
