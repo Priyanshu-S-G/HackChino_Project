@@ -14,6 +14,7 @@ services:
       MONGO_URI: "mongodb://mongodb:27017/brain_tumor_db"
       DEBUG: "true"
     volumes:
+      - .:/app  # ← maps the whole project directory to /app inside container
       - ./models:/app/models
     restart: unless-stopped
 
