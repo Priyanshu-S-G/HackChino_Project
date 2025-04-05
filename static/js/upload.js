@@ -21,35 +21,30 @@ document.addEventListener("DOMContentLoaded", function () {
       const email = document.querySelector("#email_id").value.trim();
       const doctor = document.querySelector("#doctor_name").value.trim();
 
-      // Validate name
       if (!name) {
         statusMessage.textContent = "Please enter the patient's name.";
         statusMessage.classList.add("status-red");
         return;
       }
 
-      // Validate age
       if (isNaN(age) || age <= 0) {
         statusMessage.textContent = "Please enter a valid age.";
         statusMessage.classList.add("status-red");
         return;
       }
 
-      // Validate email (optional)
       if (email && !/^\S+@\S+\.\S+$/.test(email)) {
         statusMessage.textContent = "Invalid email format.";
         statusMessage.classList.add("status-red");
         return;
       }
 
-      // Validate mobile (optional)
       if (mobile && !/^\d{10}$/.test(mobile)) {
         statusMessage.textContent = "Invalid mobile number (should be 10 digits).";
         statusMessage.classList.add("status-red");
         return;
       }
 
-      // Append validated values
       formData.append("patient_name", name);
       formData.append("patient_age", age);
       formData.append("patient_gender", gender);
@@ -58,7 +53,6 @@ document.addEventListener("DOMContentLoaded", function () {
       formData.append("doctor_name", doctor);
 
     } else {
-      // Returning patient
       const uid = document.querySelector("#patient_uid").value.trim();
       if (!uid) {
         statusMessage.textContent = "Please enter the Patient UID.";
@@ -69,19 +63,17 @@ document.addEventListener("DOMContentLoaded", function () {
       formData.append("patient_uid", uid);
     }
 
-    // Validate MRI file input
-    const files = document.querySelector("#mri_images").files;
-    if (files.length === 0) {
-      statusMessage.textContent = "Please upload at least one MRI image.";
+    const fileInput = document.querySelector("#mri_image");
+    const file = fileInput.files[0];
+
+    if (!file) {
+      statusMessage.textContent = "Please upload an MRI image.";
       statusMessage.classList.add("status-red");
       return;
     }
 
-    for (let file of files) {
-      formData.append("mri_images", file);
-    }
+    formData.append("mri_image", file);
 
-    // Disable button + feedback
     submitButton.disabled = true;
     submitButton.textContent = "Uploading...";
     submitButton.classList.add("opacity-50", "cursor-not-allowed");
@@ -96,12 +88,10 @@ document.addEventListener("DOMContentLoaded", function () {
         throw new Error("Upload failed. Server error.");
       }
 
-      const result = await response.json().catch(() => {
-        throw new Error("Upload succeeded, but response was malformed.");
-      });
+      const result = await response.json();
 
       if (!result.scan_id) {
-        throw new Error("Missing scan ID in response.");
+        throw new Error("Upload succeeded but no scan ID received.");
       }
 
       statusMessage.textContent = "Upload successful! Redirecting...";
@@ -110,6 +100,7 @@ document.addEventListener("DOMContentLoaded", function () {
       setTimeout(() => {
         window.location.href = `/scan-results/${result.scan_id}`;
       }, 1500);
+
     } catch (error) {
       statusMessage.textContent = error.message || "An error occurred during upload.";
       statusMessage.classList.add("status-red");

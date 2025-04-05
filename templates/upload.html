@@ -53,8 +53,8 @@
         </div>
 
         <!-- MRI Upload -->
-        <label>Upload MRI Images</label>
-        <input type="file" id="mri_images" multiple accept=".jpg,.jpeg,.png" class="input" required />
+        <label>Upload MRI Image</label>
+        <input type="file" id="mri_image" name="mri_image" accept=".jpg,.jpeg,.png" class="input" required />
 
         <button type="submit" class="button" style="width: 100%;">Upload</button>
       </form>
@@ -87,3 +87,4 @@
   <script src="{{ url_for('static', filename='js/upload.js') }}"></script>
 </body>
 </html>
+

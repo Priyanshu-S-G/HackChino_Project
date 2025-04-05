@@ -4,14 +4,14 @@ import numpy as np
 import os
 import time
 from werkzeug.utils import secure_filename
-from database_handler import save_new_patient_scan, save_existing_patient_scan
+from database_handler import save_new_patient_scan, save_existing_patient_scan, check_patient_exists, patients_collection
 from PIL import Image
 
 app = Flask(__name__, template_folder='templates', static_folder='static')
 
-# Ensure necessary folders exist
-UPLOAD_FOLDER = "uploads"
-MASK_FOLDER = "masks"
+# Ensure necessary folders exist inside 'static'
+UPLOAD_FOLDER = os.path.join("static", "uploads")
+MASK_FOLDER = os.path.join("static", "masks")
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 os.makedirs(MASK_FOLDER, exist_ok=True)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -66,7 +66,7 @@ def history_results_page():
 
 @app.route('/api/upload', methods=['POST'])
 def upload_mri():
-    files = request.files.getlist("mri_images")
+    files = request.files.getlist("mri_images")  # <-- fixed field name
     if not files:
         return jsonify({"error": "No files uploaded"}), 400
 
@@ -76,10 +76,12 @@ def upload_mri():
             filename = secure_filename(file.filename)
             filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             file.save(filepath)
-            saved_filepaths.append(filepath)
+            # Normalize to relative POSIX-style path from 'static/'
+            rel_path = os.path.relpath(filepath, start="static").replace(os.sep, "/")
+            saved_filepaths.append(rel_path)
 
-    # Only process the first image for now
-    first_image_path = saved_filepaths[0]
+    # Only process the first image
+    first_image_path = os.path.join("static", saved_filepaths[0])
     try:
         image = preprocess_image(first_image_path)
     except Exception as e:
@@ -96,23 +98,24 @@ def upload_mri():
     avg_prediction = np.mean(list(predictions.values()), axis=0)
     mask = postprocess_prediction(avg_prediction)
 
-    segmented_image_path = os.path.join(MASK_FOLDER, f"segmented_{os.path.basename(first_image_path)}")
-    Image.fromarray(mask[0, :, :, 0] * 255).convert("L").save(segmented_image_path)
+    # Save segmented mask to static/masks/
+    mask_filename = f"segmented_{os.path.basename(saved_filepaths[0])}"
+    segmented_image_rel_path = os.path.join("masks", mask_filename).replace(os.sep, "/")
+    segmented_image_abs_path = os.path.join("static", segmented_image_rel_path)
+    Image.fromarray(mask[0, :, :, 0] * 255).convert("L").save(segmented_image_abs_path)
 
     # Determine patient type
     patient_type = request.form.get("patient_type", "new")
-    patient_info = None
 
     if patient_type == "new":
-        # Handle new patient
         patient_name = request.form.get("patient_name", "Unknown")
         patient_age = request.form.get("patient_age", "")
         patient_gender = request.form.get("patient_gender", "")
         doctor_name = request.form.get("doctor_name", "")
-        phone = request.form.get("phone", "")
-        email = request.form.get("email", "")
+        phone = request.form.get("mobile_number", "")
+        email = request.form.get("email_id", "")
 
-        patient_info = save_new_patient_scan(
+        scan_info = save_new_patient_scan(
             patient_name=patient_name,
             patient_age=patient_age,
             patient_gender=patient_gender,
@@ -120,32 +123,42 @@ def upload_mri():
             email=email,
             doctor_name=doctor_name,
             original_file_path=saved_filepaths,
-            segmented_image_path=segmented_image_path
+            segmented_image_path=segmented_image_rel_path
         )
 
+        patient_record = {
+            "patient_name": patient_name,
+            "patient_age": patient_age,
+            "patient_gender": patient_gender
+        }
+
     else:
-        # Handle returning patient
-        patient_id = request.form.get("patient_id", "").strip()
+        patient_id = request.form.get("patient_uid", "").strip()  # <-- fixed: patient_uid matches JS
         if not patient_id:
             return jsonify({"error": "Patient ID required for returning patients"}), 400
 
-        # You can add an optional check here:
-        # if not check_patient_exists(patient_id):
-        #     return jsonify({"error": "Patient ID not found"}), 404
+        if not check_patient_exists(patient_id):
+            return jsonify({"error": "Patient ID not found"}), 404
 
-        patient_info = save_existing_patient_scan(
+        scan_info = save_existing_patient_scan(
             patient_id=patient_id,
             original_file_path=saved_filepaths,
-            segmented_image_path=segmented_image_path
+            segmented_image_path=segmented_image_rel_path
         )
 
-    return render_template("result.html",
-                           patient_id=patient_info["patient_id"],
-                           patient_name=request.form.get("patient_name", ""),
-                           patient_age=request.form.get("patient_age", ""),
-                           patient_gender=request.form.get("patient_gender", ""),
-                           scan_date=patient_info["scan_date"].split(" ")[0],
-                           segmented_image=segmented_image_path.replace("static/", ""))
+        patient_record = patients_collection.find_one({"patient_id": patient_id})
+        if not patient_record:
+            return jsonify({"error": "Patient record missing"}), 500
+
+    return jsonify({
+        "scan_id": scan_info.get("scan_id", ""),
+        "patient_id": scan_info["patient_id"],
+        "patient_name": patient_record.get("patient_name", ""),
+        "patient_age": patient_record.get("patient_age", ""),
+        "patient_gender": patient_record.get("patient_gender", ""),
+        "scan_date": scan_info["scan_date"].split(" ")[0],
+        "segmented_image": segmented_image_rel_path
+    }), 200
 
 
 def preprocess_image(image_path):
