@@ -4,7 +4,7 @@ import numpy as np
 import os
 import time
 from werkzeug.utils import secure_filename
-from database_handler import save_scan_record
+from database_handler import save_new_patient_scan, save_existing_patient_scan
 from PIL import Image
 
 app = Flask(__name__, template_folder='templates', static_folder='static')
