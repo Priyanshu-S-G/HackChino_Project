@@ -4,7 +4,7 @@ import numpy as np
 import os
 import time
 from werkzeug.utils import secure_filename
-from database_handler import save_new_patient_scan, save_existing_patient_scan, check_patient_exists, patients_collection
+from database_handler import save_new_patient_scan, save_existing_patient_scan, check_patient_exists, patients_collection, scans_collection
 from PIL import Image
 
 app = Flask(__name__, template_folder='templates', static_folder='static')
@@ -66,19 +66,18 @@ def history_results_page():
 
 @app.route('/api/upload', methods=['POST'])
 def upload_mri():
-    files = request.files.getlist("mri_images")  # <-- fixed field name
-    if not files:
-        return jsonify({"error": "No files uploaded"}), 400
+    file = request.files.get("mri_image")  # fixed: single image field name
+    if not file or not file.filename:
+        return jsonify({"error": "No file uploaded"}), 400
 
-    saved_filepaths = []
-    for file in files:
-        if file and file.filename:
-            filename = secure_filename(file.filename)
-            filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-            file.save(filepath)
-            # Normalize to relative POSIX-style path from 'static/'
-            rel_path = os.path.relpath(filepath, start="static").replace(os.sep, "/")
-            saved_filepaths.append(rel_path)
+    # Save the uploaded file
+    filename = secure_filename(file.filename)
+    filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+    file.save(filepath)
+
+    # Normalize to relative POSIX-style path from 'static/'
+    rel_path = os.path.relpath(filepath, start="static").replace(os.sep, "/")
+    saved_filepaths = [rel_path]  # now a list with one element
 
     # Only process the first image
     first_image_path = os.path.join("static", saved_filepaths[0])
@@ -165,22 +164,90 @@ def preprocess_image(image_path):
     if not os.path.exists(image_path):
         raise FileNotFoundError(f"Image file not found: {image_path}")
 
+    # Load image as grayscale, resize it to (128, 128)
     image = tf.keras.preprocessing.image.load_img(image_path, color_mode="grayscale", target_size=(128, 128))
     image = tf.keras.preprocessing.image.img_to_array(image)
 
-    # Corrected: Convert grayscale to 4-channel format
+    # Convert grayscale to 4-channel format (repeat image along the last axis)
     image = np.concatenate([image] * 4, axis=-1)
 
+    # Add batch dimension (shape becomes (1, 128, 128, 4))
     image = np.expand_dims(image, axis=0)
+
+    # Normalize pixel values to range [0, 1]
     image = image / 255.0
 
+    # Ensure correct shape
     if image.shape != (1, 128, 128, 4):
         raise ValueError(f"Preprocessed image has unexpected shape: {image.shape}")
 
     return image
 
-def postprocess_prediction(prediction):
-    return (prediction > 0.5).astype(np.uint8)
+def postprocess_prediction(prediction, output_path):
+    # Squeeze the prediction to remove extra dimensions (shape becomes (128, 128))
+    prediction = np.squeeze(prediction, axis=0)  # From (1, 128, 128, 1) to (128, 128)
+    
+    # Convert the prediction to binary (0 or 255)
+    binary_mask = (prediction > 0.5).astype(np.uint8) * 255
+
+    # Save the mask as a single-channel image (grayscale)
+    Image.fromarray(binary_mask).convert("L").save(output_path)
+
+    return binary_mask
+
+@app.route("/scan-results/<scan_id>")
+def show_scan_result(scan_id):
+    # Find the scan in the database
+    scan = scans_collection.find_one({"scan_id": scan_id})
+    if not scan:
+        return "Scan not found", 404
+
+    # Fetch the related patient info
+    patient = patients_collection.find_one({"patient_id": scan["patient_id"]})
+    if not patient:
+        return "Patient not found", 404
+
+    # Render the result page with scan + patient info
+    return render_template(
+        "result.html",
+        patient_name=patient.get("patient_name", ""),
+        patient_age=patient.get("patient_age", ""),
+        patient_gender=patient.get("patient_gender", ""),
+        scan_date=scan.get("scan_date", ""),
+        segmented_image=scan.get("segmented_image_path", ""),
+        patient_id=scan.get("patient_id", "")
+    )
+
+@app.route('/api/history', methods=['POST'])
+def get_patient_history():
+    # Get the patient_id from the request
+    patient_id = request.form.get('patient_uid', '').strip()
+    if not patient_id:
+        return jsonify({"error": "Patient ID required"}), 400
+
+    # Fetch the scan history for the patient from the scans_collection
+    scans = list(scans_collection.find({"patient_id": patient_id}).sort("scan_date", -1))  # Convert cursor to list
+
+    # If no scans are found for the patient
+    if not scans:
+        return jsonify({"error": "No scans found for this patient"}), 404
+
+    # Format the result for the frontend
+    scan_history = []
+    for scan in scans:
+        scan_history.append({
+            "scan_id": scan.get("scan_id", ""),
+            "scan_date": scan.get("scan_date", ""),
+            "segmented_image_path": scan.get("segmented_image_path", ""),
+            "patient_name": scan.get("patient_name", ""),
+            "patient_age": scan.get("patient_age", ""),
+            "patient_gender": scan.get("patient_gender", ""),
+        })
+
+    # Debug print statement to check the response structure
+    print("Returning scan history:", scan_history)
+
+    return jsonify({"records": scan_history}), 200  # Ensure the data is under 'records'
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=os.getenv("DEBUG", "False").lower() == "true")

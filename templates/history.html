@@ -47,7 +47,10 @@
 <body class="bg-background text-foreground min-h-screen flex items-center justify-center p-6">
   <div class="bg-card shadow-xl rounded-2xl p-8 w-full max-w-xl">
     <h2 class="text-2xl font-semibold mb-6 text-center">🔍 View Patient Scan History</h2>
+    
+    <!-- Patient UID Form -->
     <form id="history-form" class="space-y-4">
+      <label for="patient_uid" class="sr-only">Patient UID</label>
       <input
         type="text"
         id="patient_uid"
@@ -62,8 +65,12 @@
         View History
       </button>
     </form>
+    
+    <!-- Container for History Results -->
     <div id="history-results" class="mt-8"></div>
   </div>
+
+  <!-- Include JS -->
   <script src="{{ url_for('static', filename='js/history.js') }}"></script>
 </body>
 </html>

@@ -53,12 +53,13 @@ def save_new_patient_scan(
     except Exception as e:
         raise RuntimeError(f"Failed to update patient info: {str(e)}")
 
+    # Use singular "original_image_path"
     scan_record = {
         "scan_id": scan_id,
         "patient_id": patient_id,
         "scan_date": scan_date,
-        "original_image_paths": original_file_path,
-        "segmented_image_path": segmented_image_path
+        "original_image_path": original_file_path,  # Singular form
+        "segmented_image_path": segmented_image_path  # Ensure segmented image path is set
     }
 
     try:
@@ -80,17 +81,21 @@ def save_existing_patient_scan(
 ):
     scan_id = generate_scan_id()
     scan_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    
+    # Use singular "original_image_path"
     scan_record = {
         "scan_id": scan_id,
         "patient_id": patient_id,
         "scan_date": scan_date,
-        "original_image_paths": original_file_path,
-        "segmented_image_path": segmented_image_path
+        "original_image_path": original_file_path,  # Singular form
+        "segmented_image_path": segmented_image_path  # Ensure segmented image path is set
     }
+    
     try:
         result = scans_collection.insert_one(scan_record)
     except Exception as e:
         raise RuntimeError(f"Failed to insert scan for existing patient: {str(e)}")
+    
     return {
         "inserted_id": str(result.inserted_id),
         "patient_id": patient_id,
@@ -108,6 +113,7 @@ def get_scan_history(patient_id=None, scan_date=None):
     if scan_date:
         query["scan_date"] = {"$regex": scan_date}
 
+    # Retrieve scan records including segmented_image_path
     return list(scans_collection.find(query, {"_id": 0}))
 
 def delete_scan_record(scan_id):
