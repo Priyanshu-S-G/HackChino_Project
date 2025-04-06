@@ -64,7 +64,7 @@ def history_page():
 def history_results_page():
     return render_template('history_results.html')
 
-@app.route('/api/upload', methods=['POST']) 
+@app.route('/api/upload', methods=['POST'])
 def upload_mri():
     file = request.files.get("mri_image")  # fixed: single image field name
     if not file or not file.filename:
@@ -95,13 +95,13 @@ def upload_mri():
         return jsonify({"error": f"Model prediction failed: {str(e)}"}), 500
 
     avg_prediction = np.mean(list(predictions.values()), axis=0)
-    mask = postprocess_prediction(avg_prediction)
+    mask = postprocess_prediction(avg_prediction)  # No need to pass output path here
 
     # Ensure the mask is 2D
     if mask.ndim == 3:
         mask = mask[:, :, 0]  # Take the first channel if mask has 3 dimensions
 
-    # Assign the path for the segmented mask
+    # Save segmented mask to static/masks/
     mask_filename = f"segmented_{os.path.basename(saved_filepaths[0])}"
     segmented_image_rel_path = os.path.join("masks", mask_filename).replace(os.sep, "/")
     segmented_image_abs_path = os.path.join("static", segmented_image_rel_path)
@@ -110,7 +110,7 @@ def upload_mri():
     os.makedirs(os.path.dirname(segmented_image_abs_path), exist_ok=True)
 
     # Save the 2D binary mask
-    Image.fromarray(mask * 255).convert("L").save(segmented_image_abs_path)
+    Image.fromarray(mask).convert("L").save(segmented_image_abs_path)
 
     # Determine patient type
     patient_type = request.form.get("patient_type", "new")
@@ -191,24 +191,14 @@ def preprocess_image(image_path):
 
     return image
 
-from PIL import Image
-import numpy as np
-
-def postprocess_prediction(prediction, output_path):
+def postprocess_prediction(prediction):
     # Squeeze the prediction to remove extra dimensions (shape becomes (128, 128))
     prediction = np.squeeze(prediction, axis=0)  # From (1, 128, 128, 1) to (128, 128)
     
     # Convert the prediction to binary (0 or 255)
     binary_mask = (prediction > 0.5).astype(np.uint8) * 255
 
-    # Ensure the output directory exists before saving the file
-    output_dir = os.path.dirname(output_path)
-    if not os.path.exists(output_dir):
-        os.makedirs(output_dir)
-
     # Save the mask as a single-channel image (grayscale)
-    Image.fromarray(binary_mask).convert("L").save(output_path)
-
     return binary_mask
 
 @app.route("/scan-results/<scan_id>")
