@@ -77,7 +77,6 @@
   </body>
 </html>
 {% endcomment %}
-
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -143,7 +142,7 @@
         padding: 50px;
         padding-left: 150px;
         padding-right: 150px;
-        background-image: url("../static/doctor.png");
+        background-image: url("{{ url_for('static', filename='image/doctor.png') }}");
         background-repeat: no-repeat;
         background-size: cover;
         border: #444;
@@ -282,7 +281,7 @@
   <body>
     <header>
       <div class="logo">
-        <img src="{{ url_for('static', filename='logo.png') }}" alt="" />
+        <img src="{{ url_for('static', filename='image/logo.png') }}" alt="" />
         <!-- <span>CereBroScan</span> -->
       </div>
       <nav>
@@ -309,7 +308,7 @@
           >
         </div>
         <div class="brain-illustration">
-          <!-- <img src="{{ url_for('static', filename='brain-icon.png') }}" alt="Brain Illustration"> -->
+          <!-- <img src="{{ url_for('static', filename='image/brain-icon.png') }}" alt="Brain Illustration"> -->
         </div>
       </section>
       <section class="mission-section">
@@ -335,15 +334,15 @@
         </div>
         <div class="medical-images">
           <img
-            src="{{ url_for('static', filename='medical-1.png') }}"
+            src="{{ url_for('static', filename='image/medical-1.png') }}"
             alt="Medical Care"
           />
           <img
-            src="{{ url_for('static', filename='medical-2.png') }}"
+            src="{{ url_for('static', filename='image/medical-2.png') }}"
             alt="Patient Care"
           />
           <img
-            src="{{ url_for('static', filename='medical-3.png') }}"
+            src="{{ url_for('static', filename='image/medical-3.png') }}"
             alt="Healthcare"
           />
         </div>
@@ -354,24 +353,24 @@
       <div class="footer-content">
         <div class="footer-logo">
           <img
-            src="{{ url_for('static', filename='logo.png') }}"
+            src="{{ url_for('static', filename='image/logo.png') }}"
             alt="CereBroScan Logo"
           />
           <p>Contact us on</p>
           <div class="social-links">
             <a href="#"
               ><img
-                src="{{ url_for('static', filename='facebook.png') }}"
+                src="{{ url_for('static', filename='image/facebook.png') }}"
                 alt="Facebook"
             /></a>
             <a href="#"
               ><img
-                src="{{ url_for('static', filename='instagram.png') }}"
+                src="{{ url_for('static', filename='image/instagram.png') }}"
                 alt="Instagram"
             /></a>
             <a href="#"
               ><img
-                src="{{ url_for('static', filename='twitter.png') }}"
+                src="{{ url_for('static', filename='image/twitter.png') }}"
                 alt="Twitter"
             /></a>
           </div>
