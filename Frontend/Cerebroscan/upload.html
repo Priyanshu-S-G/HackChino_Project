@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload MRI Scan - CereBroScan</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/upload.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <img src="/logo.png" alt="">
+            <!-- <span>CereBroScan</span> -->
+        </div>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="#brain-tumor">Brain Tumor</a></li>
+                <li><a href="#about">About Us</a></li>
+                <li><a href="#contact">Contact Us</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="upload-container">
+        <div class="upload-form">
+            <h1>📋 Upload MRI Scan</h1>
+            <form id="mriUploadForm">
+                <div class="form-group">
+                    <label for="patientType">Patient Type</label>
+                    <select id="patientType" required>
+                        <option value="new">New Patient</option>
+                        <option value="existing">Existing Patient</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="patientName">Patient Name</label>
+                    <input type="text" id="patientName" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="patientAge">Patient Age</label>
+                    <input type="number" id="patientAge" min="1" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="patientGender">Patient Gender</label>
+                    <select id="patientGender" required>
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="mobileNumber">Mobile Number (Optional)</label>
+                    <input type="tel" id="mobileNumber">
+                </div>
+
+                <div class="form-group">
+                    <label for="emailId">Email ID (Optional)</label>
+                    <input type="email" id="emailId">
+                </div>
+
+                <div class="form-group">
+                    <label for="doctorName">Doctor's Name (Optional)</label>
+                    <input type="text" id="doctorName">
+                </div>
+
+                <div class="form-group">
+                    <label for="mriImages">Upload MRI Images</label>
+                    <input type="file" id="mriImages" accept="image/*" multiple required>
+                </div>
+
+                <button type="submit" class="upload-btn">Upload</button>
+            </form>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo">
+                <img src="/logo.png" alt="CereBroScan Logo">
+                <p>Contact us on</p>
+                <div class="social-links">
+                    <a href="#"><img src="/facebook.png" alt="Facebook"></a>
+                    <a href="#"><img src="/instagram.png" alt="Instagram"></a>
+                    <a href="#"><img src="/twitter.png" alt="Twitter"></a>
+                </div>
+            </div>
+            <div class="footer-links">
+                <ul>
+                    <br>
+                    <br>
+                    <br>
+                    <li><a href="#">Signs of brain tumor</a></li>
+                    <li><a href="#">Diagnosis and treatment</a></li>
+                    <li><a href="#">Brain tumor FAQs</a></li>
+                </ul>
+                <ul>
+                    <br>
+                    <br>
+                    <br>
+                    <li><a href="#">About us</a></li>
+                    <li><a href="#">Terms and conditions</a></li>
+                    <li><a href="#">Help</a></li>
+                </ul>
+            </div>
+        </div>
+    </footer>
+    <script src="js/main.js"></script>
+</body>
+</html>

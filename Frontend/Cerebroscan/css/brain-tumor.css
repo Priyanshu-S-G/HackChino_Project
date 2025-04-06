@@ -1,0 +1,99 @@
+.tumor-info-container {
+    padding: 4rem 5%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.page-header {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.page-header h1 {
+    font-size: 2.5rem;
+    color: var(--secondary-color);
+    margin-bottom: 0.5rem;
+}
+
+.page-header p {
+    color: var(--primary-color);
+    font-size: 1.2rem;
+}
+
+.tumor-content {
+    background: white;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+
+.tumor-section {
+    margin-bottom: 2.5rem;
+}
+
+.tumor-section:last-child {
+    margin-bottom: 0;
+}
+
+.tumor-section h2 {
+    color: var(--secondary-color);
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+    position: relative;
+    padding-bottom: 0.5rem;
+}
+
+.tumor-section h2::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 60px;
+    height: 3px;
+    background-color: var(--primary-color);
+}
+
+.tumor-section p {
+    line-height: 1.8;
+    color: var(--text-color);
+}
+
+.tumor-section ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.tumor-section ul li {
+    padding: 0.5rem 0;
+    padding-left: 1.5rem;
+    position: relative;
+}
+
+.tumor-section ul li::before {
+    content: '•';
+    color: var(--primary-color);
+    position: absolute;
+    left: 0;
+}
+
+.tumor-section strong {
+    color: var(--secondary-color);
+}
+
+@media (max-width: 768px) {
+    .tumor-info-container {
+        padding: 2rem 5%;
+    }
+
+    .page-header h1 {
+        font-size: 2rem;
+    }
+
+    .tumor-section h2 {
+        font-size: 1.5rem;
+    }
+
+    .tumor-content {
+        padding: 1.5rem;
+    }
+}

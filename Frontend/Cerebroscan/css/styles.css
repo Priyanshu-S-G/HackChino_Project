@@ -1,0 +1,222 @@
+:root {
+    --primary-color: #7CC5D9;
+    --secondary-color: #333;
+    --text-color: #444;
+    --light-bg: #f5f5f5;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+    line-height: 1.6;
+    color: var(--text-color);
+}
+
+/* Header Styles */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 4%;
+    background-color: #7CC5D9;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    
+}
+
+.logo img {
+    height: 50px;
+}
+
+nav ul {
+    display: flex;
+    list-style: none;
+    gap: 2rem;
+}
+
+nav a {
+    text-decoration: none;
+    color: var(--secondary-color);
+}
+
+/* Scanner Section */
+.scanner-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    /* padding: 5rem 5%; */
+    padding: 50px;
+    padding-left: 150px;
+    padding-right: 150px;
+    background-image: url("../doctor.png");
+    background-repeat: no-repeat;
+    background-size: cover;
+    border: #444;
+}
+doc-img{
+    width: 300px;
+}
+
+
+.scanner-container {
+    
+    text-align: center;
+    border-radius: 25px;
+    background: #F2EFEF;
+    max-width: 400px;
+    padding: 20px;
+    width: 3200px;
+    height: 305px;
+
+}
+
+.scanner-container h2 {
+    margin-bottom: 1rem;
+
+}
+
+.scan-btn, .history-btn {
+    /* display: block; */
+    width: 100%;
+    padding: 0.8rem;
+    margin: 0.5rem 0;
+    border: none;
+    border-radius: 5px;
+    background-color: #7CC5D9;
+    cursor: pointer;
+    transition: background-color 0.3s;
+
+}
+
+.scan-btn:hover, .history-btn:hover {
+    background-color: var(--primary-color);
+    color: white;
+    text-decoration: none;
+}
+
+.brain-illustration img {
+    width: 350px;
+}
+
+/* Mission Section */
+.mission-section {
+    padding: 4rem 5%;
+    text-align: left;
+    font-family: jomhuria;
+    font-weight: 200;
+    font-size: 1.25rem;
+}
+
+.mission-section h1 {
+    font-size: 3rem;
+    color: var(--secondary-color);
+    margin-bottom: 0.5rem;
+    font-family: jomhuria;
+    color: #7F7F7F;
+    text-align: left;
+}
+
+/* Help Section */
+.help-section {
+    padding: 4rem 5%;
+    background-color: var(--light-bg);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #7CC5D9;
+}
+
+.help-content {
+    max-width: 50%;
+}
+
+.medical-images {
+    display: flex;
+    gap: 1rem;
+}
+
+.medical-images img {
+    width: 150px;
+    height: 150px;
+    border-radius: 10px;
+    object-fit: cover;
+}
+
+/* Footer */
+footer {
+    background-color: white;
+    padding: 3rem 5%;
+    border-top: 1px solid #eee;
+}
+
+.footer-content {
+    display: flex;
+    justify-content: space-evenly;
+    text-align: center;
+}
+
+.social-links {
+    /* display: flex; */      
+    gap: 1rem;
+    margin-top: 1rem;
+    align-items: center;
+}
+
+.social-links img {
+    width: 30px;
+    height: 30px;
+}
+
+.footer-links {
+    display: flex;
+    gap: 4rem;
+}
+
+.footer-links ul {
+    list-style: none;
+}
+
+.footer-links a {
+    text-decoration: none;
+    color: var(--text-color);
+    line-height: 2;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .scanner-section,
+    .help-section {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .help-content {
+        max-width: 100%;
+        margin-bottom: 2rem;
+    }
+
+    .medical-images {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .footer-content {
+        flex-direction: column;
+        gap: 2rem;
+    }
+
+    .footer-links {
+        flex-direction: column;
+        gap: 1rem;
+    }
+}
